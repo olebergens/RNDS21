@@ -1,11 +1,11 @@
-import java.lang.Exception
 import kotlin.math.*
+
 
 class Math {
 
-    private fun ggT(num1: Int, num2: Int): Int {
-        return if (num2 == 0) num1
-        else ggT(num2, num1 % num2)
+    private fun ggT(a: Int, b: Int): Int {
+        return if (b == 0) a
+        else ggT(b, a % b)
     }
 
     private fun ggT(num1: Long, num2: Long): Long {
@@ -104,14 +104,47 @@ class Math {
      * e mod phi(N) = d --> das d soll berechnet werden
      */
     fun calModInv(e: Int, n: Int): Int {
-        val p: Int = primFactor(n).p.toInt()
-        val q: Int = primFactor(n).q.toInt()
-        return e % eulerPHI(n)
+        val eulerPhi = eulerPHI(n)
+        // e muss 1 < e < eulerphi sein
+        if (e !in 2 until eulerPhi) throw Exception("fuer e muss gelten: 1 < e < phi(N)!")
+        var i = 0
+        var d = 0
+        while (i <= 9) {
+            val x: Int = 1 + i * eulerPhi
+            if (x % e == 0) {
+                d = x / e
+                break
+            }
+            i++
+        }
+        return d
     }
+
+    fun calModInv2(e: Int, n: Int): Int {
+        val p: Long = primFactor(n).p
+        val q: Long = primFactor(n).q
+        val eulerPHI = eulerPrimPHI(p, q)
+        if (e !in 2 until eulerPHI) throw Exception("fuer e muss gelten: 1 < e < phi(N)!")
+        var i = 0
+        var d = 0
+        while (i <= 9) {
+            val x: Int = 1 + i * eulerPHI
+            if (x % e == 0) {
+                d = x / e
+                break
+            }
+            i++
+        }
+        return d
+    }
+
 }
 
 data class PrimFactor(val q: Long, val p: Long)
 
 fun main() {
-    println(Math().checkPrim(999983))
+    val startTime = System.nanoTime()
+    println(Math().calModInv2(1721, 263713))
+    val duration = System.nanoTime() - startTime
+    println("Das Programm hat eine Laufzeit von: ${duration / 10E8} sekunden")
 }
