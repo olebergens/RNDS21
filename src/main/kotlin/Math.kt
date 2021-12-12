@@ -1,16 +1,14 @@
 import java.lang.Exception
 import kotlin.math.*
 
-data class PrimFactor(val q: Long, val p: Long)
+class Math {
 
-class MathTool {
-
-    fun ggT(num1: Int, num2: Int): Int {
+    private fun ggT(num1: Int, num2: Int): Int {
         return if (num2 == 0) num1
         else ggT(num2, num1 % num2)
     }
 
-    fun ggT(num1: Long, num2: Long): Long {
+    private fun ggT(num1: Long, num2: Long): Long {
         return if (num2 == 0.toLong()) num1
         else ggT(num2, num1 % num2)
     }
@@ -20,38 +18,41 @@ class MathTool {
     }
 
     fun eulerPrimPHI(prim1: Long, prim2: Long): Int {
-        if (!(checkPrim(prim1) || checkPrim(prim2))) throw Exception("p/q sind keine Primzahlen")
-        return 1 + (2..(prim1 * prim2)).count { ggT(it, (prim1 * prim2)) == 1.toLong() }
+        when {
+            !(checkPrim(prim1) || checkPrim(prim2)) -> throw Exception("p/q sind keine Primzahlen")
+            else -> return 1 + (2..(prim1 * prim2)).count { ggT(it, (prim1 * prim2)) == 1.toLong() }
+        }
     }
 
     /**
      * Ich schreibe hier lieber einen größeren Primzahltester, da dieser bei höheren Zahlen im Bereich ab
      * 10E13 um ≈300% effizienter ist.
      */
-    private fun checkPrim(input: Long): Boolean {
+    fun checkPrim(input: Long): Boolean {
         val zero: Long = 0.toLong()
-        if (input <= 16)
-            return (input == 2.toLong() ||
-                input == 3.toLong() ||
-                input == 5.toLong() ||
-                input == 7.toLong() ||
-                input == 11.toLong() ||
-                input == 13.toLong())
-
-        if (input % 2.toLong() == zero ||
-            input % 3.toLong() == zero ||
-            input % 5.toLong() == zero ||
-            input % 7.toLong() == zero) return false
-
-        var i: Long = 10
-        while (i*i <= input) {
-            if (input.mod(input + 1) == zero) return false
-            if (input.mod(input + 3) == zero) return false
-            if (input.mod(input + 7) == zero) return false
-            if (input.mod(input + 9) == zero) return false
-            i += 10
+        when {
+            input <= 16 -> return (input == 2.toLong() ||
+                    input == 3.toLong() ||
+                    input == 5.toLong() ||
+                    input == 7.toLong() ||
+                    input == 11.toLong() ||
+                    input == 13.toLong())
+            else -> when (zero) {
+                input % 2.toLong(), input % 3.toLong(), input % 5.toLong(), input % 7.toLong() -> return false
+                else -> {
+                    var i: Long = 10
+                    while (i * i <= input) {
+                        if (input.mod(input + 1) == zero) return false
+                        if (input.mod(input + 3) == zero) return false
+                        if (input.mod(input + 7) == zero) return false
+                        if (input.mod(input + 9) == zero) return false
+                        i += 10
+                    }
+                    return true
+                }
+            }
         }
-        return true
+
     }
 
     /**
@@ -65,7 +66,7 @@ class MathTool {
      *
      * Beispiel aus Aufgabenstellung:
      *
-     * val math = MathTool()
+     * val math = Math()
      * val prim = math.primFactor(263713)
      * println("p: ${prim.p} \nq: ${prim.q}")
      *
@@ -100,16 +101,17 @@ class MathTool {
 
     /**
      * Der Rückgabewert soll multiplikativ invers zu e mod phi(N) -> N ist dabei wieder das Produkt zweier unbekannter Primzahlen
+     * e mod phi(N) = d --> das d soll berechnet werden
      */
-    fun calModInv(e: Int, p: Int, q: Int): Int {
-        if (!(checkPrim(p.toLong()) || checkPrim(q.toLong()))) throw Exception("Q/P sind keine Primzahlen.")
-
-        return 0
+    fun calModInv(e: Int, n: Int): Int {
+        val p: Int = primFactor(n).p.toInt()
+        val q: Int = primFactor(n).q.toInt()
+        return e % eulerPHI(n)
     }
 }
 
-fun main(args: Array<String>) {
-    val math = MathTool()
-    val prim = math.primFactor(263713)
-    println("p: ${prim.p} \nq: ${prim.q}")
+data class PrimFactor(val q: Long, val p: Long)
+
+fun main() {
+    println(Math().checkPrim(999983))
 }
