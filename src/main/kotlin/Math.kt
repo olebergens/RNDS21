@@ -8,9 +8,23 @@ class Math {
         else ggT(b, a % b)
     }
 
-    private fun ggT(num1: Long, num2: Long): Long {
-        return if (num2 == 0.toLong()) num1
-        else ggT(num2, num1 % num2)
+    private fun ggT(a: Long, b: Long): Long {
+        return if (b == 0.toLong()) a
+        else ggT(b, a % b)
+    }
+
+    private fun ggTOld(a: Int, b: Int): Int {
+        return if (b == 0) a
+        else if (a == 0) b
+        else if (a > b) ggTOld(a - b, b)
+        else ggTOld(a, b - a)
+    }
+
+    private fun ggTOld(a: Long, b: Long): Long {
+        return if (b == 0.toLong()) a
+        else if (a == 0.toLong()) b
+        else if (a > b) ggTOld(a - b, b)
+        else ggTOld(a, b - a)
     }
 
     fun eulerPHI(n: Int): Int {
