@@ -32,41 +32,7 @@ class Math {
     }
 
     fun eulerPrimPHI(prim1: Long, prim2: Long): Int {
-        when {
-            !(checkPrim(prim1) || checkPrim(prim2)) -> throw Exception("p/q sind keine Primzahlen")
-            else -> return 1 + (2..(prim1 * prim2)).count { ggT(it, (prim1 * prim2)) == 1.toLong() }
-        }
-    }
-
-    /**
-     * Ich schreibe hier lieber einen größeren Primzahltester, da dieser bei höheren Zahlen im Bereich ab
-     * 10E13 um ≈300% effizienter ist.
-     */
-    fun checkPrim(input: Long): Boolean {
-        val zero: Long = 0.toLong()
-        when {
-            input <= 16 -> return (input == 2.toLong() ||
-                    input == 3.toLong() ||
-                    input == 5.toLong() ||
-                    input == 7.toLong() ||
-                    input == 11.toLong() ||
-                    input == 13.toLong())
-            else -> when (zero) {
-                input % 2.toLong(), input % 3.toLong(), input % 5.toLong(), input % 7.toLong() -> return false
-                else -> {
-                    var i: Long = 10
-                    while (i * i <= input) {
-                        if (input.mod(input + 1) == zero) return false
-                        if (input.mod(input + 3) == zero) return false
-                        if (input.mod(input + 7) == zero) return false
-                        if (input.mod(input + 9) == zero) return false
-                        i += 10
-                    }
-                    return true
-                }
-            }
-        }
-
+        return ((prim1 - 1) * (prim2 - 1)).toInt()
     }
 
     /**
@@ -157,8 +123,11 @@ class Math {
 data class PrimFactor(val q: Long, val p: Long)
 
 fun main() {
-    val startTime = System.nanoTime()
+    /**
+     * val startTime = System.nanoTime()
     println(Math().calModInv2(1721, 263713))
     val duration = System.nanoTime() - startTime
     println("Das Programm hat eine Laufzeit von: ${duration / 10E8} sekunden")
+     */
+    println(Math().eulerPHI(2257))
 }
